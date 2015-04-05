@@ -26,6 +26,13 @@ ENV EAP_HOME /opt/jboss/jboss-eap-6.3
 # Add default admin user
 RUN ${EAP_HOME}/bin/add-user.sh admin admin123! --silent
 
+# Configure Java Flight Recorder
+RUN mkdir -p /tmp/jboss/jfr \
+    && echo "JAVA_OPTS=\"\$JAVA_OPTS -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:FlightRecorderOptions=defaultrecording=true,dumponexit=true,dumponexitpath=/tmp/jboss/jfr\"" >> ${EAP_HOME}/bin/standalone.conf
+
+# Add volume if you want to externalize Java Flight recordings
+VOLUME /tmp/jboss/jfr
+
 # Enable binding to all network interfaces and debugging inside the EAP
 RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0\"" >> ${EAP_HOME}/bin/standalone.conf
 
