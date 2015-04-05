@@ -33,13 +33,20 @@ RUN mkdir -p /tmp/jboss/jfr \
 # Add volume if you want to externalize Java Flight recordings
 VOLUME /tmp/jboss/jfr
 
+#
+# Explicitly set RMI hostname to 'localhost'. Otherwise, RMI picks up
+# dynamic IP address assigned to this Docker container
+#
+RUN echo "JAVA_OPTS=\"\$JAVA_OPTS \
+ -Djava.rmi.server.hostname=localhost\"" >> ${EAP_HOME}/bin/standalone.conf
+
 # Enable binding to all network interfaces and debugging inside the EAP
 RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0\"" >> ${EAP_HOME}/bin/standalone.conf
 
 # Add volume if you want to externalize logs
 VOLUME ${EAP_HOME}/standalone/logs
 
-EXPOSE 9990 9999 8080 8787
+EXPOSE 9990 9999 8080 8787 7091
 
 ENTRYPOINT ["/opt/jboss/jboss-eap-6.3/bin/standalone.sh"]
 CMD []
