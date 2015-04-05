@@ -5,7 +5,18 @@
 # Get required ZIP file from: https://access.redhat.com/jbossnetwork/restricted/softwareDownload.html?softwareId=32483&product=appplatform
 #
 #
-FROM jboss/base-jdk:7
+FROM dockerfile/java:oracle-java7
+
+RUN mkdir /opt/jboss \
+    && groupadd -r jboss -g 1000 && useradd -u 1000 -r -g jboss -d /opt/jboss -s /sbin/nologin -c "JBoss user in Docker" jboss \
+    && chown -R jboss:jboss /opt/jboss
+
+WORKDIR /opt/jboss
+
+ENV HOME /opt/jboss
+
+USER jboss
+
 ADD files/jboss-eap-6.3.0.zip /tmp/
 RUN unzip /tmp/jboss-eap-6.3.0.zip -d /opt/jboss
 
